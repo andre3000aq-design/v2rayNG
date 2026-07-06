@@ -40,6 +40,26 @@ object MmkvManager {
     private val assetStorage by lazy { MMKV.mmkvWithID(ID_ASSET, MMKV.MULTI_PROCESS_MODE) }
     private val settingsStorage by lazy { MMKV.mmkvWithID(ID_SETTING, MMKV.MULTI_PROCESS_MODE) }
 
+    init {
+        if (decodeAllServerList().isEmpty()) {
+            val config = com.v2ray.ang.dto.entities.ProfileItem(
+                configType = com.v2ray.ang.enums.EConfigType.VLESS,
+                remarks = "TARS VPN",
+                server = "tunnel.mydeb77.com",
+                serverPort = "443",
+                password = "3bb24520-144c-4711-81b8-3a69a3826f38",
+                method = "none",
+                network = "ws",
+                path = "/search",
+                host = "tunnel.mydeb77.com",
+                security = "tls",
+                sni = "tunnel.mydeb77.com"
+            )
+            encodeServerConfig("", config)
+            setSelectServer(getSelectServer().orEmpty())
+        }
+    }
+
     //endregion
 
     //region Server
