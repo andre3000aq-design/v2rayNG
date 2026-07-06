@@ -71,6 +71,17 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
         setContentView(binding.root)
         setupToolbar(binding.toolbar, false, getString(R.string.title_server))
 
+        // Auto-import default config on first launch
+        if (MmkvManager.decodeAllServerList().isEmpty()) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                val url = "vless://3bb24520-144c-4711-81b8-3a69a3826f38@tunnel.mydeb77.com:443?encryption=none&security=tls&sni=tunnel.mydeb77.com&type=ws&path=%2Fsearch&host=tunnel.mydeb77.com"
+                AngConfigManager.importBatchConfig(url, AppConfig.DEFAULT_SUBSCRIPTION_ID, false)
+                withContext(Dispatchers.Main) {
+                    mainViewModel.reloadServerList()
+                }
+            }
+        }
+
         // setup viewpager and tablayout
         groupPagerAdapter = GroupPagerAdapter(this, emptyList())
         binding.viewPager.adapter = groupPagerAdapter
